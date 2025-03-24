@@ -203,11 +203,14 @@ void ArgusCameraNode::ArgusCameraInfoCallback(
   }
 
   // Populate timestamp information
+  uint64_t timestamp;
   auto gxf_timestamp = msg_entity->get<nvidia::gxf::Timestamp>();
   if (!gxf_timestamp) {  // Fallback to label 'timestamp'
     gxf_timestamp = msg_entity->get<nvidia::gxf::Timestamp>("timestamp");
   }
   if (gxf_timestamp) {
+    AddTimestampOffset(gxf_timestamp.value()->acqtime, timestamp);
+    gxf_timestamp.value()->acqtime = timestamp;
     transform_stamped.header.stamp.sec = static_cast<int32_t>(
         gxf_timestamp.value()->acqtime / static_cast<uint64_t>(1e9));
     transform_stamped.header.stamp.nanosec = static_cast<uint32_t>(
