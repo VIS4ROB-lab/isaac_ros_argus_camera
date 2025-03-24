@@ -39,7 +39,7 @@ components:
     camera_id: 0
     module_id: 0
     mode: 0
-    framerate: 30
+    framerate: 20
     fsync_type: 1
     camera_type: 0
     output_format: 1
