@@ -85,7 +85,7 @@ void ArgusCameraNode::AddTimestampOffset(const uint64_t input_stamp,
 void ArgusCameraNode::ArgusImageCallback(const gxf_context_t context,
                                          nitros::NitrosTypeBase& msg,
                                          const std::string frame_name) {
-  int64_t timestamp;
+  uint64_t timestamp;
 
   auto msg_entity = nvidia::gxf::Entity::Shared(context, msg.handle);
   auto gxf_timestamp = msg_entity->get<nvidia::gxf::Timestamp>();
