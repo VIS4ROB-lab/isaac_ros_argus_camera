@@ -18,66 +18,68 @@
 #ifndef ISAAC_ROS_ARGUS_CAMERA__ARGUS_CAMERA_NODE_HPP_
 #define ISAAC_ROS_ARGUS_CAMERA__ARGUS_CAMERA_NODE_HPP_
 
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "tf2_ros/transform_broadcaster.h"
-#include "tf2/LinearMath/Matrix3x3.h"
-#include "tf2/LinearMath/Transform.h"
-
 #include "isaac_ros_nitros/nitros_node.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/camera_info.hpp"
+#include "tf2/LinearMath/Matrix3x3.h"
+#include "tf2/LinearMath/Transform.h"
+#include "tf2_ros/transform_broadcaster.h"
 
-namespace nvidia
-{
-namespace isaac_ros
-{
-namespace argus
-{
+namespace nvidia {
+namespace isaac_ros {
+namespace argus {
 
-class ArgusCameraNode : public nitros::NitrosNode
-{
-public:
+class ArgusCameraNode : public nitros::NitrosNode {
+ public:
   explicit ArgusCameraNode(
-    const rclcpp::NodeOptions & options,
-    const std::string & app_yaml_filename,
-    const nitros::NitrosPublisherSubscriberConfigMap & config_map,
-    const std::vector<std::string> & preset_extension_spec_names,
-    const std::vector<std::string> & extension_spec_filenames,
-    const std::vector<std::string> & generator_rule_filenames,
-    const std::vector<std::pair<std::string, std::string>> & extensions,
-    const std::string & package_name);
+      const rclcpp::NodeOptions& options, const std::string& app_yaml_filename,
+      const nitros::NitrosPublisherSubscriberConfigMap& config_map,
+      const std::vector<std::string>& preset_extension_spec_names,
+      const std::vector<std::string>& extension_spec_filenames,
+      const std::vector<std::string>& generator_rule_filenames,
+      const std::vector<std::pair<std::string, std::string>>& extensions,
+      const std::string& package_name);
 
   ~ArgusCameraNode();
 
   void preLoadGraphCallback() override;
   void postLoadGraphCallback() override;
 
+  void AddTimestampOffset(const uint64_t input_stamp, uint64_t& output_stamp);
+
   // Callback to publish camera extrinsics to ROS TF tree
   void ArgusCameraInfoCallback(
-    const gxf_context_t context, nitros::NitrosTypeBase & msg,
-    const std::string parent_frame, const std::string child_frame,
-    const sensor_msgs::msg::CameraInfo::SharedPtr camera_info);
+      const gxf_context_t context, nitros::NitrosTypeBase& msg,
+      const std::string parent_frame, const std::string child_frame,
+      const sensor_msgs::msg::CameraInfo::SharedPtr camera_info);
 
   // Callback to set frame_id
-  void ArgusImageCallback(
-    const gxf_context_t context, nitros::NitrosTypeBase & msg,
-    const std::string frame_name);
+  void ArgusImageCallback(const gxf_context_t context,
+                          nitros::NitrosTypeBase& msg,
+                          const std::string frame_name);
 
   sensor_msgs::msg::CameraInfo::SharedPtr loadCameraInfoFromFile(
-    const std::string camera_info_url);
+      const std::string camera_info_url);
 
-protected:
+ protected:
   int camera_id_;
   int module_id_;
   int mode_;
   int fsync_type_;
   std::string camera_link_frame_name_;
 
-private:
+ private:
   // Publisher for tf2.
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_{nullptr};
 
@@ -87,8 +89,8 @@ private:
   // x             ->  z
   // y             ->  -x
   // z             ->  -y
-  tf2::Transform cam_link_pose_optical_{tf2::Matrix3x3{0, 0, 1, -1, 0, 0, 0, -1, 0},
-    tf2::Vector3{0, 0, 0}};
+  tf2::Transform cam_link_pose_optical_{
+      tf2::Matrix3x3{0, 0, 1, -1, 0, 0, 0, -1, 0}, tf2::Vector3{0, 0, 0}};
 };
 
 }  // namespace argus
