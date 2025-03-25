@@ -39,12 +39,12 @@ constexpr char APP_YAML_FILENAME[] = "config/argus_camera_mono_node.yaml";
 const nitros::NitrosPublisherSubscriberConfigMap CONFIG_MAP = {
     {OUTPUT_COMPONENT_KEY_LEFT_IMAGE,
      {.type = nitros::NitrosPublisherSubscriberType::NEGOTIATED,
-      .qos = rclcpp::SensorDataQoS(),
+      .qos = rclcpp::QoS(1),
       .compatible_data_format = OUTPUT_DEFAULT_IMAGE_FORMAT,
       .topic_name = OUTPUT_TOPIC_NAME_LEFT_IMAGE}},
     {OUTPUT_COMPONENT_KEY_LEFT_CAMERAINFO,
      {.type = nitros::NitrosPublisherSubscriberType::NEGOTIATED,
-      .qos = rclcpp::SensorDataQoS(),
+      .qos = rclcpp::QoS(1),
       .compatible_data_format = OUTPUT_DEFAULT_CAMERAINFO_FORMAT,
       .topic_name = OUTPUT_TOPIC_NAME_LEFT_CAMERAINFO}}};
 #pragma GCC diagnostic pop
