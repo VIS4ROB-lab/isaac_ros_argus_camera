@@ -169,6 +169,30 @@ void ArgusCameraNode::ArgusCameraInfoCallback(
         gxf_camera_model.value()->distortion_coefficients[7] =
             camera_info->d[3];
       }
+    } else if (gxf_camera_model.value()->distortion_type ==
+               DistortionType::Brown) {
+      // prevents distortion parameters array access if its empty
+      // simulators may send empty distortion parameter array since images are
+      // already rectified
+      if (!camera_info->d.empty()) {
+        // distortion parameters in GXF: k1, k2, k3, k4, k5, k6, p1, p2
+        // distortion parameters in ROS message: k1, k2, p1, p2, k3 ...
+        gxf_camera_model.value()->distortion_coefficients[0] =
+            camera_info->d[0];
+        gxf_camera_model.value()->distortion_coefficients[1] =
+            camera_info->d[1];
+        gxf_camera_model.value()->distortion_coefficients[2] =
+            camera_info->d[4];
+        for (uint16_t index = 3;
+             index < nvidia::gxf::CameraModel::kMaxDistortionCoefficients - 2;
+             index++) {
+          gxf_camera_model.value()->distortion_coefficients[index] = 0;
+        }
+        gxf_camera_model.value()->distortion_coefficients[6] =
+            camera_info->d[2];
+        gxf_camera_model.value()->distortion_coefficients[7] =
+            camera_info->d[3];
+      }
     } else {
       std::copy(std::begin(camera_info->d), std::end(camera_info->d),
                 std::begin(gxf_camera_model.value()->distortion_coefficients));
