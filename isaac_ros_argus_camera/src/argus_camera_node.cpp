@@ -65,23 +65,6 @@ ArgusCameraNode::ArgusCameraNode(
   registerSupportedType<nvidia::isaac_ros::nitros::NitrosImage>();
 }
 
-void ArgusCameraNode::AddTimestampOffset(const uint64_t input_stamp,
-                                         uint64_t& output_stamp) {
-  struct timespec cr;
-  uint64_t cr_nsec, ct_nsec, cyc, frq, off;
-
-  asm volatile("mrs %0, cntfrq_el0" : "=r"(frq));
-  asm volatile("mrs %0, cntvct_el0" : "=r"(cyc));
-
-  clock_gettime(CLOCK_REALTIME, &cr);
-
-  ct_nsec = (cyc * 100 / (frq / 10000)) * 1000;
-  cr_nsec = cr.tv_sec * 1000000000UL + cr.tv_nsec;
-
-  off = cr_nsec - ct_nsec;
-  output_stamp = input_stamp + off;
-}
-
 void ArgusCameraNode::ArgusImageCallback(const gxf_context_t context,
                                          nitros::NitrosTypeBase& msg,
                                          const std::string frame_name) {
@@ -94,8 +77,6 @@ void ArgusCameraNode::ArgusImageCallback(const gxf_context_t context,
     gxf_timestamp = msg_entity->get<nvidia::gxf::Timestamp>("timestamp");
   }
   if (gxf_timestamp) {
-    // AddTimestampOffset(gxf_timestamp.value()->acqtime, timestamp);
-    // gxf_timestamp.value()->acqtime = timestamp;
   } else {
     RCLCPP_WARN(get_logger(), "[ArgusCameraNode] Failed to get timestamp");
   }
@@ -233,8 +214,6 @@ void ArgusCameraNode::ArgusCameraInfoCallback(
     gxf_timestamp = msg_entity->get<nvidia::gxf::Timestamp>("timestamp");
   }
   if (gxf_timestamp) {
-    // AddTimestampOffset(gxf_timestamp.value()->acqtime, timestamp);
-    // gxf_timestamp.value()->acqtime = timestamp;
     transform_stamped.header.stamp.sec = static_cast<int32_t>(
         gxf_timestamp.value()->acqtime / static_cast<uint64_t>(1e9));
     transform_stamped.header.stamp.nanosec = static_cast<uint32_t>(

@@ -56,8 +56,6 @@ class ArgusCameraNode : public nitros::NitrosNode {
   void preLoadGraphCallback() override;
   void postLoadGraphCallback() override;
 
-  void AddTimestampOffset(const uint64_t input_stamp, uint64_t& output_stamp);
-
   // Callback to publish camera extrinsics to ROS TF tree
   void ArgusCameraInfoCallback(
       const gxf_context_t context, nitros::NitrosTypeBase& msg,
