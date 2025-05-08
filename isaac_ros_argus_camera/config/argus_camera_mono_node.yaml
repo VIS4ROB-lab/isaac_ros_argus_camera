@@ -46,12 +46,12 @@ components:
     camera_provider: global_camera_provider/global_camera_provider
     analog_gain_1: 0.0
     analog_gain_2: 0.0
-    compute_brightness: false
+    compute_brightness: true
     exposure_mode: auto
     exposure_time_1: 10000000
     exposure_time_2: 10000000
-    isp_digital_gain: 0
-    use_average_map: false
+    isp_digital_gain: 1
+    use_average_map: true
     cuda_stream_pool: stream
 - type: nvidia::gxf::MemoryAvailableSchedulingTerm
   parameters:
